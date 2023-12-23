@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bible Addicts </title>
+  <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+
+  <h1>Date and Offset Selector</h1>
+
+  <details>
+    <summary>Settings</summary>
+    <div class="collapsible-content">
+
+      <label for="dateSelector">Select a date:</label>
+      <input type="date" id="dateSelector">
+
+      <br>
+
+      <div id="dateOffsetDiv">
+      <label for="offsetSelector">Select an offset:</label>
+      <input type="number" id="offsetSelector" step="1">
+      </div>
+
+      <div>
+        <label for="numLists">How many lists:</label>
+        <input type="number" id="numLists" name="numLists" min="1" value="1">
+        <button onclick="increment()">+</button>
+        <button onclick="decrement()">-</button>
+      </div>
+    
+
+      <br>
+
+      <div id="planEditor">
+        <div id="listOfBooksDiv">
+        <ul id="listOfBooks">
+        </div>
+        </ul>
+        <div id="planListsDiv"></div>
+      </div>
+
+    </div>
+  </details>
+
+  <script src="https://unpkg.com/sortablejs@1.15.1/Sortable.min.js"></script>
+  <script src="js/logic.js"></script>
+  <script src="js/loadBibleData.js"></script>
+
+</body>
+
+</html>

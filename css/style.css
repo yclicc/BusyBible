@@ -1,0 +1,51 @@
+body {
+    font-family: Arial, sans-serif;
+    padding: 20px;
+  }
+
+/* Style to hide the native arrow icon in some browsers */
+summary::-webkit-details-marker {
+    display: none;
+}
+
+/* Styling for the collapsible content */
+details {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+summary {
+    cursor: pointer;
+    padding: 10px;
+    background-color: #f1f1f1;
+    border-bottom: 1px solid #ddd;
+}
+
+details[open] summary {
+    border-bottom: none;
+}
+
+/* Styling for the content inside the collapsible element */
+div.collapsible-content {
+    padding: 10px;
+}
+
+#planEditor {
+    display: flex;
+}
+
+#planEditor > div {
+    flex: 1;
+    border: 1px solid #ddd; /* Add a 1px solid border with a light gray color */
+    background-color: #f3f3f3;
+    padding: 10px; /* Add padding for better visual appeal */
+    display: flex;
+    flex-direction: column;
+}
+
+#planEditor > div > ul {
+    flex: 1;
+    border: 1px solid #ddd;
+    background-color: #dbdbdb
+}
