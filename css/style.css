@@ -40,12 +40,27 @@ div.collapsible-content {
     border: 1px solid #ddd; /* Add a 1px solid border with a light gray color */
     background-color: #f3f3f3;
     padding: 10px; /* Add padding for better visual appeal */
-    display: flex;
-    flex-direction: column;
+    /* display: flex;
+    flex-direction: column; */
 }
 
 #planEditor > div > ul {
     flex: 1;
     border: 1px solid #ddd;
     background-color: #dbdbdb
+}
+
+.list-group-item {
+    position: relative;
+    display: block;
+    padding: .75rem 1.25rem;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,.125);
+}
+
+.selected {
+	background-color: #f9c7c8;
+	border: solid red 1px !important;
+	z-index: 1 !important;
 }

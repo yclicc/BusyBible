@@ -27,6 +27,8 @@ function updatePlanListsDiv() {
       group: 'shared',
       animation: 150,
       onEnd: updatePlanListsDiv,
+      multiDrag: true,
+      selectedClass: 'selected',
       store: {
         // get: function (sortable) {
         //   var temp = plan[index].map(String)
@@ -49,6 +51,7 @@ function populateList(list, listOfIndexes, canDelete, sublistIndex) {
     var listItem = document.createElement("li");
 
     listItem.setAttribute("data-id", i);
+    listItem.classList.add("list-group-item")
     listItem.textContent = bibleData[i]["book"] + " ";
     if (canDelete) {
       var deleteButton = document.createElement('span');
@@ -176,7 +179,9 @@ function pageLogic() {
     },
     animation: 150,
     sort: false,
-    onEnd: updatePlanListsDiv
+    onEnd: updatePlanListsDiv,
+    multiDrag: true,
+    selectedClass: 'selected'
   });
 
   updatePlanListsDiv();
