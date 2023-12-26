@@ -1,7 +1,14 @@
+var startDate, offsetValue;
+
+function mod(n, m) {
+  // Modulo that works for negative lookups, turning them into the modulus minus the number
+  return ((n % m) + m) % m
+}
+
 // Function to update URL parameters
 function updateURL() {
-  const startDate = startDateSelector.value;
-  const offsetValue = offsetSelector.value;
+  startDate = startDateSelector.value;
+  offsetValue = parseInt(offsetSelector.value);
 
   // Update URL with parameters
   const url = new URL(window.location.href);
@@ -110,26 +117,35 @@ function replaceList() {
   appendToList();
 }
 
-function increment() {
-  plan.push([]);
+function updateListsSelectors() {
   updatePlanListsDiv();
   numLists.value = plan.length;
   selectList.max = plan.length;
+}
+
+function increment() {
+  plan.push([]);
+  updateListsSelectors();
 }
 
 function decrement() {
   if (plan.length > 1) {
     plan.pop();
   }
-  updatePlanListsDiv();
-  numLists.value = plan.length;
-  selectList.max = plan.length;
+  updateListsSelectors();
 }
 
 function pageLogic() {
+  function valueUpdate() {
+    updateURL();
+    updateDayOfPlan();
+    reportStatus();
+    calculateReadings();
+  }
+  
   // Event listeners for input changes
-  startDateSelector.addEventListener('input', updateURL);
-  offsetSelector.addEventListener('input', updateURL);
+  startDateSelector.addEventListener('input', valueUpdate);
+  offsetSelector.addEventListener('input', valueUpdate);
 
   // Converts dd/mm/yyyy as a string to a UTC 00:00:00 date at the start of that day (timezone agnostic)
   function createUTCDateFromDateString(dateString) {
@@ -166,8 +182,6 @@ function pageLogic() {
     return Array.isArray(data) && data.length > 0 && data.every(sublist => isArrayValid(sublist, min, max));
   }
 
-  var startDate, offsetValue;
-
   // Function to set initial values from URL parameters
   function setInitialValues() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -200,7 +214,7 @@ function pageLogic() {
       }
     }
 
-    selectList.max = plan.length;
+    updateListsSelectors();
 
     // Update URL with default values
     updateURL();
@@ -220,16 +234,22 @@ function pageLogic() {
 
   updatePlanListsDiv();
 
-  var daysSinceStart = Math.ceil((new Date(today) - new Date(startDate)) / (1000 * 60 * 60 * 24));
-  var dayOfPlan = daysSinceStart + offsetValue;
+  var daysSinceStart, dayOfPlan;
+  function updateDayOfPlan() {
+    daysSinceStart = Math.ceil((new Date(today) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+    dayOfPlan = daysSinceStart + offsetValue;  
+  }
 
+  updateDayOfPlan();
   reportStatus();
 
   function calculateReadings() {
     const readingsLists = plan.map(listOfInts => listOfInts.flatMap(integer => bibleData[integer]["chapters"]))
-    const todaysReadings = readingsLists.map(listOfChapters => listOfChapters[dayOfPlan % listOfChapters.length]["title"])
+    const todaysReadings = readingsLists.map(listOfChapters => listOfChapters[mod(dayOfPlan, listOfChapters.length)]["title"])
+    links.innerHTML = todaysReadings.join(', ') + '<br />' +
+    `<a href="https://www.biblegateway.com/passage/?search=${todaysReadings.join(',')}&version=NIVUK">Read</a>`
     return todaysReadings;
   }
 
-  links.innerHTML = calculateReadings();
+  calculateReadings();
 };
