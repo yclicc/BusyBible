@@ -135,6 +135,20 @@ function decrement() {
   updateListsSelectors();
 }
 
+function fetchAndRedirect(bibleGatewayUrl) {
+  fetch(thirdPartyUrl)
+    .then(response => response.text())
+    .then(html => {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      const audioLink = doc.querySelector(".audio-link");
+
+      console.log(audioLink);
+    })
+}
+
+
 function pageLogic() {
   function valueUpdate() {
     updateURL();
@@ -242,12 +256,15 @@ function pageLogic() {
 
   updateDayOfPlan();
   reportStatus();
-
+  
   function calculateReadings() {
     const readingsLists = plan.map(listOfInts => listOfInts.flatMap(integer => bibleData[integer]["chapters"]))
     const todaysReadings = readingsLists.map(listOfChapters => listOfChapters[mod(dayOfPlan, listOfChapters.length)]["title"])
+    const link = "https://www.biblegateway.com/passage/?search=${todaysReadings.join(',')}&version=NIVUK"
     links.innerHTML = todaysReadings.join(', ') + '<br />' +
-    `<a href="https://www.biblegateway.com/passage/?search=${todaysReadings.join(',')}&version=NIVUK">Read</a>`
+    `<a href="${link}">Read</a>` + '<br />' +
+    `<a href="javascript:void(0);" id="audioLink">Listen</a>`
+    document.getElementById('audioLink').onclick(fetchAndRedirect(link));
     return todaysReadings;
   }
 
