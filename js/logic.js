@@ -260,11 +260,9 @@ function pageLogic() {
   function calculateReadings() {
     const readingsLists = plan.map(listOfInts => listOfInts.flatMap(integer => bibleData[integer]["chapters"]))
     const todaysReadings = readingsLists.map(listOfChapters => listOfChapters[mod(dayOfPlan, listOfChapters.length)]["title"])
-    const link = "https://www.biblegateway.com/passage/?search=${todaysReadings.join(',')}&version=NIVUK"
+    const link = `https://www.biblegateway.com/passage/?search=${todaysReadings.join(',')}&version=NIVUK`
     links.innerHTML = todaysReadings.join(', ') + '<br />' +
-    `<a href="${link}">Read</a>` + '<br />' +
-    `<a href="javascript:void(0);" id="audioLink">Listen</a>`
-    document.getElementById('audioLink').onclick(fetchAndRedirect(link));
+    `<a href="${link}">Read</a>`;
     return todaysReadings;
   }
 
