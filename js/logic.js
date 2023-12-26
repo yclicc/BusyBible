@@ -1,7 +1,7 @@
 // Function to update URL parameters
 function updateURL() {
-  const startDate = document.getElementById('dateSelector').value;
-  const offsetValue = document.getElementById('offsetSelector').value;
+  const startDate = startDateSelector.value;
+  const offsetValue = offsetSelector.value;
 
   // Update URL with parameters
   const url = new URL(window.location.href);
@@ -16,7 +16,6 @@ function updateURL() {
 
 function updatePlanListsDiv() {
   listOfSortableLists = []
-  var planListsDiv = document.getElementById("planListsDiv")
   // Get rid of everything currently in the div
   planListsDiv.innerHTML = "";
   plan.forEach(function (sublist, index) {
@@ -78,12 +77,17 @@ for (let i = 1; i <= 66; i++) {
   listOfBookIndexes.push(i)
 }
 
-var listOfBooks = document.getElementById("listOfBooks");
+var statusReport = document.getElementById('statusReport');
+var links = document.getElementById('links');
+var startDateSelector = document.getElementById('startDateSelector');
+var offsetSelector = document.getElementById('offsetSelector');
 var numLists = document.getElementById('numLists');
 var selectList = document.getElementById('selectList');
+var listOfBooks = document.getElementById("listOfBooks");
+var planListsDiv = document.getElementById("planListsDiv")
 
-document.addEventListener('DOMContentLoaded', function() {
-  numLists.addEventListener('input', function(event) {
+document.addEventListener('DOMContentLoaded', function () {
+  numLists.addEventListener('input', function (event) {
     event.preventDefault();
     numLists.value = plan.length;
   });
@@ -124,8 +128,8 @@ function decrement() {
 
 function pageLogic() {
   // Event listeners for input changes
-  document.getElementById('dateSelector').addEventListener('input', updateURL);
-  document.getElementById('offsetSelector').addEventListener('input', updateURL);
+  startDateSelector.addEventListener('input', updateURL);
+  offsetSelector.addEventListener('input', updateURL);
 
   // Converts dd/mm/yyyy as a string to a UTC 00:00:00 date at the start of that day (timezone agnostic)
   function createUTCDateFromDateString(dateString) {
@@ -162,27 +166,29 @@ function pageLogic() {
     return Array.isArray(data) && data.length > 0 && data.every(sublist => isArrayValid(sublist, min, max));
   }
 
+  var startDate, offsetValue;
+
   // Function to set initial values from URL parameters
   function setInitialValues() {
     const urlParams = new URLSearchParams(window.location.search);
-    const startDate = urlParams.get('start');
-    const offsetValue = urlParams.get('offset');
+    startDate = urlParams.get('start');
+    offsetValue = urlParams.get('offset');
     const encodedPlan = urlParams.get("plan");
 
     // Set default values if not provided in the URL
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
     if (!startDate || !dateRegex.test(startDate)) {
-      document.getElementById('dateSelector').value = today;
-    } else {
-      document.getElementById('dateSelector').value = startDate;
+      startDate = today;
     }
+    startDateSelector.value = startDate;
 
     const offsetInt = parseInt(offsetValue);
     if (!offsetValue || isNaN(offsetInt)) {
-      document.getElementById('offsetSelector').value = 0;
+      offsetValue = 0;
     } else {
-      document.getElementById('offsetSelector').value = offsetValue;
+      offsetValue = offsetInt;
     }
+    offsetSelector.value = offsetValue;
 
     if (!encodedPlan) {
       plan = defaultPlan;
@@ -200,6 +206,13 @@ function pageLogic() {
     updateURL();
   }
 
+  function reportStatus() {
+    statusReport.innerHTML = 
+    `You started the plan on ${startDate} <br />
+    The offset is ${offsetValue}<br />
+    So you are on day ${dayOfPlan + 1}`
+  }
+
   // Set initial values on page load
   setInitialValues();
 
@@ -207,5 +220,16 @@ function pageLogic() {
 
   updatePlanListsDiv();
 
+  var daysSinceStart = Math.ceil((new Date(today) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+  var dayOfPlan = daysSinceStart + offsetValue;
 
+  reportStatus();
+
+  function calculateReadings() {
+    const readingsLists = plan.map(listOfInts => listOfInts.flatMap(integer => bibleData[integer]["chapters"]))
+    const todaysReadings = readingsLists.map(listOfChapters => listOfChapters[dayOfPlan % listOfChapters.length]["title"])
+    return todaysReadings;
+  }
+
+  links.innerHTML = calculateReadings();
 };
