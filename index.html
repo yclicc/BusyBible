@@ -32,6 +32,14 @@
         <button onclick="increment()">+</button>
         <button onclick="decrement()">-</button>
       </div>
+
+      <div>
+        <button onclick="appendToList()">Append To</button>
+        <button onclick="replaceList()">Replace</button>
+        <label for="selectList"> list:</label>
+        <input type="number" id="selectList" name="selectList" min="1" max="1" value="1">
+        <button onclick="clearSelection()">Clear Selection</button>
+      </div>
     
 
       <br>
@@ -47,7 +55,6 @@
     </div>
   </details>
 
-  <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.js"></script>
   <script src="js/logic.js"></script>
   <script src="js/loadBibleData.js"></script>
 

@@ -5,6 +5,7 @@ let bibleData = {}
 var listOfBooksSortable;
 var listOfSortableLists;
 var plan;
+var selectedBooks = [];
 
 function addDataToBook(obj, key, value) {
     // Check if the key already exists in the object

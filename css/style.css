@@ -47,7 +47,11 @@ div.collapsible-content {
 #planEditor > div > ul {
     flex: 1;
     border: 1px solid #ddd;
-    background-color: #dbdbdb
+    background-color: #dbdbdb;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+  
 }
 
 .list-group-item {

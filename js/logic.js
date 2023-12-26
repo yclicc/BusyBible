@@ -23,37 +23,35 @@ function updatePlanListsDiv() {
     var sublistUl = document.createElement("ul");
     populateList(sublistUl, sublist, true, index)
     planListsDiv.append(sublistUl);
-    var sortableForSublist = new Sortable(sublistUl, {
-      group: 'shared',
-      animation: 150,
-      onEnd: updatePlanListsDiv,
-      multiDrag: true,
-      selectedClass: 'selected',
-      store: {
-        // get: function (sortable) {
-        //   var temp = plan[index].map(String)
-        //   console.log(temp);
-        //   return temp;
-        // },
-        set: function (sortable) {
-          var order = sortable.toArray().map(Number);
-          plan[index] = order;
-        }
-      }
-    });
-    listOfSortableLists.push(sortableForSublist);
     updateURL();
   });
 }
 
-function populateList(list, listOfIndexes, canDelete, sublistIndex) {
+// Function to append circled numbers to li elements
+function appendNumberInCircle(element, index) {
+  let circledNumber;
+  if (index <= 20) {
+    circledNumber = String.fromCodePoint(0x245F + index); // Unicode for circled numbers
+  } else if (index <= 35) {
+    circledNumber = String.fromCodePoint(0x3250 - 20 + index); // Unicode for numbers between 20 and 50
+  } else if (index <= 50) {
+    circledNumber = String.fromCodePoint(0x32B1 - 36 + index);
+  } else {
+    circledNumber = `(${index})`
+  }
+  element.innerHTML += `<span class="circled-number">${circledNumber}</span>`;
+}
+
+function populateList(list, listOfIndexes, deleteInsteadOfSelect, sublistIndex) {
+  list.innerHTML = "";
   listOfIndexes.forEach(function (i) {
     var listItem = document.createElement("li");
 
     listItem.setAttribute("data-id", i);
     listItem.classList.add("list-group-item")
     listItem.textContent = bibleData[i]["book"] + " ";
-    if (canDelete) {
+    if (deleteInsteadOfSelect) {
+      // This is a RHS list of books in the plan, so we want to be able to delete them
       var deleteButton = document.createElement('span');
       deleteButton.className = 'delete-btn';
       deleteButton.innerHTML = '❌';
@@ -64,16 +62,55 @@ function populateList(list, listOfIndexes, canDelete, sublistIndex) {
         listItem.parentNode.removeChild(listItem);
       });
       listItem.appendChild(deleteButton);
+    } else {
+      // This is the LHS list of books in the whole Bible, so we want to be able to select them
+      listItem.addEventListener('click', function () {
+        appendNumberInCircle(listItem, selectedBooks.length + 1);
+        selectedBooks.push(i);
+      });
     }
     list.appendChild(listItem);
   });
 }
 
+let listOfBookIndexes = []
+for (let i = 1; i <= 66; i++) {
+  listOfBookIndexes.push(i)
+}
+
+var listOfBooks = document.getElementById("listOfBooks");
+var numLists = document.getElementById('numLists');
+var selectList = document.getElementById('selectList');
+
+document.addEventListener('DOMContentLoaded', function() {
+  numLists.addEventListener('input', function(event) {
+    event.preventDefault();
+    numLists.value = plan.length;
+  });
+})
+
+
+function clearSelection() {
+  selectedBooks = [];
+  populateList(listOfBooks, listOfBookIndexes, false);
+}
+
+function appendToList() {
+  plan[selectList.value - 1] = plan[selectList.value - 1].concat(selectedBooks);
+  clearSelection();
+  updatePlanListsDiv();
+}
+
+function replaceList() {
+  plan[selectList.value - 1] = [];
+  appendToList();
+}
 
 function increment() {
   plan.push([]);
   updatePlanListsDiv();
-  document.getElementById("numLists").value = plan.length;
+  numLists.value = plan.length;
+  selectList.max = plan.length;
 }
 
 function decrement() {
@@ -81,7 +118,8 @@ function decrement() {
     plan.pop();
   }
   updatePlanListsDiv();
-  document.getElementById("numLists").value = plan.length;
+  numLists.value = plan.length;
+  selectList.max = plan.length;
 }
 
 function pageLogic() {
@@ -156,6 +194,8 @@ function pageLogic() {
       }
     }
 
+    selectList.max = plan.length;
+
     // Update URL with default values
     updateURL();
   }
@@ -163,26 +203,7 @@ function pageLogic() {
   // Set initial values on page load
   setInitialValues();
 
-  let listOfBookIndexes = []
-  for (let i = 1; i <= 66; i++) {
-    listOfBookIndexes.push(i)
-  }
-
-  var listOfBooks = document.getElementById("listOfBooks");
-  populateList(listOfBooks, listOfBookIndexes, false, 0);
-
-  listOfBooksSortable = new Sortable(listOfBooks, {
-    group: {
-      name: 'shared',
-      pull: 'clone',
-      put: false
-    },
-    animation: 150,
-    sort: false,
-    onEnd: updatePlanListsDiv,
-    multiDrag: true,
-    selectedClass: 'selected'
-  });
+  populateList(listOfBooks, listOfBookIndexes, false);
 
   updatePlanListsDiv();
 
