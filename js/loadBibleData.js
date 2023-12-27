@@ -4,7 +4,6 @@ const filePath = '/data/bibledata.json';
 let bibleData = {}
 var listOfBooksSortable;
 var listOfSortableLists;
-var plan;
 var selectedBooks = [];
 
 function addDataToBook(obj, key, value) {
