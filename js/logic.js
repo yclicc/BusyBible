@@ -22,6 +22,65 @@ function mod(n, m) {
     return ((n % m) + m) % m;
 }
 
+// Converts dd/mm/yyyy as a string to a UTC 00:00:00 date at the start of that day (timezone agnostic)
+function createUTCDateFromDateString(dateString) {
+    const [day, month, year] = dateString.split('/').map(Number);
+
+    // Note: Months in JavaScript are 0-indexed (0 for January, 1 for February, etc.)
+    const utcDate = new Date(Date.UTC(year, month - 1, day));
+
+    return utcDate.toISOString().split('T')[0];
+}
+
+function getTodaysDateInLocalTimeAsIfUTC() {
+    // Get the time now in the user's timezone e.g. "2023-12-18T15:03:49.796Z" in GMT+9
+    const today = new Date();
+    // Convert to dd/mm/yyyy format in local users timezone
+    const todayFormatted = today.toLocaleDateString('en-gb', { year: 'numeric', month: '2-digit', day: '2-digit' });
+    return createUTCDateFromDateString(todayFormatted)
+}
+
+// Generates a list of book indexes
+function generateBookIndexes() {
+    return Array.from({ length: 66 }, (_, i) => i + 1);
+}
+
+let listOfBookIndexes = generateBookIndexes();
+
+// Appends a delete button to list items
+function appendDeleteButton(listItem, sublistIndex) {
+    var deleteButton = document.createElement('span');
+    deleteButton.className = 'delete-btn';
+    deleteButton.innerHTML = '❌';
+    deleteButton.addEventListener('click', () => deleteBookFromPlan(listItem, sublistIndex));
+    listItem.appendChild(deleteButton);
+}
+
+// Appends circled numbers to list items
+function appendNumberInCircle(element, index) {
+  let circledNumber = getCircledNumber(index);
+  element.innerHTML += `<span class="circled-number">${circledNumber}</span>`;
+}
+
+// Returns the Unicode character for a circled number
+function getCircledNumber(index) {
+  if (index <= 20) {
+      return String.fromCodePoint(0x245F + index);
+  } else if (index <= 35) {
+      return String.fromCodePoint(0x3250 - 20 + index);
+  } else if (index <= 50) {
+      return String.fromCodePoint(0x32B1 - 36 + index);
+  } else {
+      return `(${index})`;
+  }
+}
+
+// Event handler for book selection
+function selectBook(bookIndex, listItem) {
+  appendNumberInCircle(listItem, selectedBooks.length + 1);
+  selectedBooks.push(bookIndex);
+}
+
 // Populates a list element with book entries
 function populateList(listElement, bookIndexes, isDeletable, sublistIndex) {
     listElement.innerHTML = "";
@@ -41,24 +100,11 @@ function populateList(listElement, bookIndexes, isDeletable, sublistIndex) {
     });
 }
 
-// Appends a delete button to list items
-function appendDeleteButton(listItem, sublistIndex) {
-    var deleteButton = document.createElement('span');
-    deleteButton.className = 'delete-btn';
-    deleteButton.innerHTML = '❌';
-    deleteButton.addEventListener('click', () => deleteBookFromPlan(listItem, sublistIndex));
-    listItem.appendChild(deleteButton);
-}
-
-// Event handler for book selection
-function selectBook(bookIndex, listItem) {
-    appendNumberInCircle(listItem, selectedBooks.length + 1);
-    selectedBooks.push(bookIndex);
-}
-
+// Clears the selection
 function clearSelection() {
     selectedBooks = [];
     populateList(listOfBooks, listOfBookIndexes, false);
+    valueUpdate();
 }
 
 function appendToList() {
@@ -76,6 +122,7 @@ function updateListsSelectors() {
     updatePlanListsDiv();
     numLists.value = plan.length;
     selectList.max = plan.length;
+    valueUpdate();
 }
 
 function increment() {
@@ -89,7 +136,6 @@ function decrement() {
     }
     updateListsSelectors();
 }
-
 
 // Event handler for deleting a book from the plan
 function deleteBookFromPlan(listItem, sublistIndex) {
@@ -120,71 +166,66 @@ function updatePlanListsDiv() {
     updateURL();
 }
 
-// Appends circled numbers to list items
-function appendNumberInCircle(element, index) {
-    let circledNumber = getCircledNumber(index);
-    element.innerHTML += `<span class="circled-number">${circledNumber}</span>`;
-}
-
-// Returns the Unicode character for a circled number
-function getCircledNumber(index) {
-    if (index <= 20) {
-        return String.fromCodePoint(0x245F + index);
-    } else if (index <= 35) {
-        return String.fromCodePoint(0x3250 - 20 + index);
-    } else if (index <= 50) {
-        return String.fromCodePoint(0x32B1 - 36 + index);
-    } else {
-        return `(${index})`;
-    }
-}
-
-// Converts dd/mm/yyyy as a string to a UTC 00:00:00 date at the start of that day (timezone agnostic)
-function createUTCDateFromDateString(dateString) {
-    const [day, month, year] = dateString.split('/').map(Number);
-
-    // Note: Months in JavaScript are 0-indexed (0 for January, 1 for February, etc.)
-    const utcDate = new Date(Date.UTC(year, month - 1, day));
-
-    return utcDate.toISOString().split('T')[0];
-}
-
-function getTodaysDateInLocalTimeAsIfUTC() {
-    // Get the time now in the user's timezone e.g. "2023-12-18T15:03:49.796Z" in GMT+9
-    const today = new Date();
-    // Convert to dd/mm/yyyy format in local users timezone
-    const todayFormatted = today.toLocaleDateString('en-gb', { year: 'numeric', month: '2-digit', day: '2-digit' });
-    return createUTCDateFromDateString(todayFormatted)
-}
-
-// Generates a list of book indexes
-function generateBookIndexes() {
-    return Array.from({ length: 66 }, (_, i) => i + 1);
-}
-
-let listOfBookIndexes = generateBookIndexes();
-
 function valueUpdate() {
-    updateURL();
-    updateDayOfPlan();
-    reportStatus();
-    calculateReadings();
-  }
+  updateURL();
+  updateDayOfPlan();
+  reportStatus();
+  calculateReadings();
+}
 
 // Initializes the page on load
 function pageLogic() {
-    populateList(listOfBooksElement, listOfBookIndexes, false);
-    today = getTodaysDateInLocalTimeAsIfUTC()
-    setInitialValuesFromURL();
-    updatePlanListsDiv();
-    valueUpdate();
+  populateList(listOfBooksElement, listOfBookIndexes, false);
+  today = getTodaysDateInLocalTimeAsIfUTC()
+  setInitialValuesFromURL();
+  updatePlanListsDiv();
+  valueUpdate();
 };
+
+// Updates the status report on the page
+function reportStatus() {
+    statusReportElement.innerHTML =
+        `You started the plan on ${startDate} <br />
+    The offset is ${offsetValue}<br />
+    So you are on day ${dayOfPlan + 1}`
+}
+
+// Updates the day of the plan
+function updateDayOfPlan() {
+    daysSinceStart = Math.ceil((new Date(today) - new Date(startDate)) / (1000 * 60 * 60 * 24));
+    dayOfPlan = daysSinceStart + offsetValue;
+}
+
+function bookIndexToListOfChapters(bookIndex) {
+  if (bookIndex === undefined) {
+      return []
+  } else {
+      return bibleData[bookIndex]["chapters"]
+  }
+}
+
+function listOfChaptersToReadings(listOfChapters) {
+  if (listOfChapters === undefined || listOfChapters.length == 0) {
+      return []
+  } else {
+      return [listOfChapters[mod(dayOfPlan, listOfChapters.length)]["title"]]
+  }
+}
+
+// Calculates and displays today's readings
+function calculateReadings() {
+    const readingsLists = plan.map(listOfInts => listOfInts.flatMap(bookIndexToListOfChapters));
+    const todaysReadings = readingsLists.flatMap(listOfChaptersToReadings);
+    const link = `https://www.biblegateway.com/passage/?search=${todaysReadings.join(',')}&version=NIVUK`;
+    linksElement.innerHTML = "Today's readings are: " + todaysReadings.join(', ') + '<br />' +
+        `<a href="${link}">Read</a>`;
+    return todaysReadings;
+}
 
 // Function to check if an array contains only integers between min and max (inclusive)
 function isArrayValid(arr, min, max) {
     return Array.isArray(arr) && arr.length > 0 && arr.every(num => Number.isInteger(num) && num >= min && num <= max);
 }
-
 
 // Function to check if plan is a list of lists, where each sublist is nonempty and contains only a list of
 // integers between 1 and 66 inclusive
@@ -232,45 +273,9 @@ function setInitialValuesFromURL() {
     updateURL();
 }
 
-// Updates the status report on the page
-function reportStatus() {
-    statusReportElement.innerHTML =
-        `You started the plan on ${startDate} <br />
-    The offset is ${offsetValue}<br />
-    So you are on day ${dayOfPlan + 1}`
-}
-
-// Updates the day of the plan
-function updateDayOfPlan() {
-    daysSinceStart = Math.ceil((new Date(today) - new Date(startDate)) / (1000 * 60 * 60 * 24));
-    dayOfPlan = daysSinceStart + offsetValue;
-}
-
-function bookIndexToListOfChapters(bookIndex) {
-    if (bookIndex === undefined) {
-        return []
-    } else {
-        return bibleData[bookIndex]["chapters"]
-    }
-}
-
-function listOfChaptersToReadings(listOfChapters) {
-    if (listOfChapters === undefined || listOfChapters.length == 0) {
-        return []
-    } else {
-        return [listOfChapters[mod(dayOfPlan, listOfChapters.length)]["title"]]
-    }
-}
-
-// Calculates and displays today's readings
-function calculateReadings() {
-    const readingsLists = plan.map(listOfInts => listOfInts.flatMap(bookIndexToListOfChapters));
-    const todaysReadings = readingsLists.flatMap(listOfChaptersToReadings);
-    const link = `https://www.biblegateway.com/passage/?search=${todaysReadings.join(',')}&version=NIVUK`;
-    linksElement.innerHTML = todaysReadings.join(', ') + '<br />' +
-        `<a href="${link}">Read</a>`;
-    return todaysReadings;
-}
+// Event handler for input changes
+startDateSelector.addEventListener('input', valueUpdate);
+offsetSelector.addEventListener('input', valueUpdate);
 
 // Additional event listeners
 document.addEventListener('DOMContentLoaded', function () {
@@ -280,6 +285,12 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 })
 
-// Event listeners for input changes
-startDateSelector.addEventListener('input', valueUpdate);
-offsetSelector.addEventListener('input', valueUpdate);
+// Event listeners for plan manipulation
+selectListElement.addEventListener('change', valueUpdate);
+document.getElementById('appendButton').addEventListener('click', appendToList);
+document.getElementById('replaceButton').addEventListener('click', replaceList);
+document.getElementById('clearSelectionButton').addEventListener('click', clearSelection);
+
+// Event listeners for plan modification
+document.getElementById('increment').addEventListener('click', increment);
+document.getElementById('decrement').addEventListener('click', decrement);
