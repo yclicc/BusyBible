@@ -204,20 +204,58 @@ function bookIndexToListOfChapters(bookIndex) {
   }
 }
 
-function listOfChaptersToReadings(listOfChapters) {
-  if (listOfChapters === undefined || listOfChapters.length == 0) {
-      return []
-  } else {
-      return [listOfChapters[mod(dayOfPlan, listOfChapters.length)]["title"]]
-  }
-}
-
-function listOfChaptersToListenings(listOfChapters) {
+// Convert a listOfChapters to a list of JSON objects, then extract the desired key
+function listOfChaptersToExtractKey(listOfChapters, key) {
     if (listOfChapters === undefined || listOfChapters.length == 0) {
         return []
     } else {
-        return [listOfChapters[mod(dayOfPlan, listOfChapters.length)]["abbrev"]]
+        return [listOfChapters[mod(dayOfPlan, listOfChapters.length)][key]]
     }
+}
+
+function listOfChaptersToReadings(listOfChapters) {
+  return listOfChaptersToExtractKey(listOfChapters, "title")
+}
+
+function listOfChaptersToListenings(listOfChapters) {
+    return listOfChaptersToExtractKey(listOfChapters, "abbrev")
+}
+
+function listOfChaptersToVerseCount(listOfChapters) {
+    return listOfChaptersToExtractKey(listOfChapters, "verses")
+}
+
+function formatTime(seconds) {
+    // Ensure the input is a positive number
+    seconds = Math.abs(seconds);
+  
+    // Calculate days, hours, minutes, and remaining seconds
+    const days = Math.floor(seconds / (24 * 3600));
+    const hours = Math.floor((seconds % (24 * 3600)) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = Math.floor(seconds % 60);
+  
+    // Construct the formatted time string
+    let formattedTime = '';
+    if (days > 0) {
+      formattedTime += days + 'D:';
+    }
+    if (hours > 0 || days > 0) {
+      formattedTime += (hours < 10 ? '0' : '') + hours + 'h:';
+    }
+    if (minutes > 0 || hours > 0 || days > 0) {
+      formattedTime += (minutes < 10 ? '0' : '') + minutes + 'm:';
+    }
+    formattedTime += (remainingSeconds < 10 ? '0' : '') + remainingSeconds + 's';
+  
+    return formattedTime;
+  }  
+
+function verseCountToAudioDuration(verseCount) {
+    // The complete Suchet recording is 80 hours long
+    const secondsPerVerse = 80*60*60 / 31102
+    const estimatedSecondsDuration = secondsPerVerse * verseCount;
+    return formatTime(estimatedSecondsDuration);
 }
 
 // Calculates and displays today's readings
@@ -227,7 +265,13 @@ function calculateReadings() {
     const link = `https://www.biblegateway.com/passage/?search=${todaysReadings.join(',')}&version=NIVUK`;
     const todaysListenings = readingsLists.flatMap(listOfChaptersToListenings);
     const audioLink = `https://www.biblegateway.com/audio/suchet/nivuk/${todaysListenings.join(',')}`;
+    const verseCount = readingsLists.flatMap(listOfChaptersToVerseCount).reduce(function(prev,curr){
+        return prev + curr;
+    },0)
+    const estimatedAudioDuration = verseCountToAudioDuration(verseCount);
     linksElement.innerHTML = "Today's readings are: " + todaysReadings.join(', ') + '<br />' +
+        `Verses: ${verseCount}` + '<br />' +
+        `Estimated audio duration: ${estimatedAudioDuration}` + '<br />' +
         `<a href="${link}">Read 📖</a>` + '<br />' +
         `<a href="${audioLink}">Listen 🔊</a>`;
     return todaysReadings;
