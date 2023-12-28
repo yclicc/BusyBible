@@ -1,14 +1,40 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     padding: 20px;
-  }
-
-/* Style to hide the native arrow icon in some browsers */
-summary::-webkit-details-marker {
-    display: none;
+    margin: 0;
+    background-color: #f8f8f8;
+    color: #333;
 }
 
-/* Styling for the collapsible content */
+header {
+    background-color: #3498db;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+h1 {
+    margin: 0;
+}
+
+main {
+    max-width: 800px;
+    margin: 20px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+section {
+    margin-bottom: 20px;
+}
+
+input,
+button {
+    margin-bottom: 10px;
+}
+
 details {
     border: 1px solid #ddd;
     border-radius: 4px;
@@ -18,7 +44,8 @@ details {
 summary {
     cursor: pointer;
     padding: 10px;
-    background-color: #f1f1f1;
+    background-color: #3498db;
+    color: #fff;
     border-bottom: 1px solid #ddd;
 }
 
@@ -26,8 +53,7 @@ details[open] summary {
     border-bottom: none;
 }
 
-/* Styling for the content inside the collapsible element */
-div.collapsible-content {
+.collapsible-content {
     padding: 10px;
 }
 
@@ -35,23 +61,32 @@ div.collapsible-content {
     display: flex;
 }
 
-#planEditor > div {
+#planEditor>div {
     flex: 1;
-    border: 1px solid #ddd; /* Add a 1px solid border with a light gray color */
+    border: 1px solid #ddd;
     background-color: #f3f3f3;
-    padding: 10px; /* Add padding for better visual appeal */
-    /* display: flex;
-    flex-direction: column; */
+    padding: 10px;
 }
 
-#planEditor > div > ul {
+#planEditor>div>ul {
     flex: 1;
     border: 1px solid #ddd;
     background-color: #dbdbdb;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
-  
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+h4 {
+    margin-top: 0;
+    color: #333;
+}
+
+#listOfBooksDiv ul,
+#planListsDiv ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .list-group-item {
@@ -60,11 +95,11 @@ div.collapsible-content {
     padding: .75rem 1.25rem;
     margin-bottom: -1px;
     background-color: #fff;
-    border: 1px solid rgba(0,0,0,.125);
+    border: 1px solid rgba(0, 0, 0, 0.125);
 }
 
 .selected {
-	background-color: #f9c7c8;
-	border: solid red 1px !important;
-	z-index: 1 !important;
+    background-color: #f9c7c8;
+    border: solid red 1px !important;
+    z-index: 1 !important;
 }
