@@ -212,13 +212,24 @@ function listOfChaptersToReadings(listOfChapters) {
   }
 }
 
+function listOfChaptersToListenings(listOfChapters) {
+    if (listOfChapters === undefined || listOfChapters.length == 0) {
+        return []
+    } else {
+        return [listOfChapters[mod(dayOfPlan, listOfChapters.length)]["abbrev"]]
+    }
+}
+
 // Calculates and displays today's readings
 function calculateReadings() {
     const readingsLists = plan.map(listOfInts => listOfInts.flatMap(bookIndexToListOfChapters));
     const todaysReadings = readingsLists.flatMap(listOfChaptersToReadings);
     const link = `https://www.biblegateway.com/passage/?search=${todaysReadings.join(',')}&version=NIVUK`;
+    const todaysListenings = readingsLists.flatMap(listOfChaptersToListenings);
+    const audioLink = `https://www.biblegateway.com/audio/suchet/nivuk/${todaysListenings.join(',')}`;
     linksElement.innerHTML = "Today's readings are: " + todaysReadings.join(', ') + '<br />' +
-        `<a href="${link}">Read</a>`;
+        `<a href="${link}">Read 📖</a>` + '<br />' +
+        `<a href="${audioLink}">Listen 🔊</a>`;
     return todaysReadings;
 }
 
