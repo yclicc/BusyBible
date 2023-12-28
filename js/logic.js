@@ -3,13 +3,14 @@ const statusReportElement = document.getElementById('statusReport');
 const linksElement = document.getElementById('links');
 const startDateSelector = document.getElementById('startDateSelector');
 const offsetSelector = document.getElementById('offsetSelector');
+const translationSelector = document.getElementById('translationSelector');
 const numListsElement = document.getElementById('numLists');
 const selectListElement = document.getElementById('selectList');
 const listOfBooksElement = document.getElementById("listOfBooks");
 const planListsDiv = document.getElementById("planListsDiv");
 
 // Initial global variables
-let startDate, today, offsetValue;
+let startDate, translation, today, offsetValue;
 let plan = [];
 let defaultPlan = [[40, 41, 42, 43], [1, 2, 3, 4, 5], [45, 46, 47, 48, 49, 50, 51, 58], 
                     [52, 53, 54, 55, 56, 57, 59, 60, 61, 62, 63, 64, 65, 66], [18, 22], 
@@ -100,6 +101,16 @@ function populateList(listElement, bookIndexes, isDeletable, sublistIndex) {
     });
 }
 
+// Populate translation selector
+function populateTranslationSelector() {
+    for (const key in bibleTranslations) {
+        const option = document.createElement('option');
+        option.value = key;
+        option.text = bibleTranslations[key]['label'];
+        translationSelector.appendChild(option);
+    }
+}
+
 // Clears the selection
 function clearSelection() {
     selectedBooks = [];
@@ -145,14 +156,20 @@ function deleteBookFromPlan(listItem, sublistIndex) {
 }
 
 // Updates the URL with current parameters
-function updateURL() {
+function updateURL(pushNotReplace = false) {
     startDate = startDateSelector.value;
     offsetValue = parseInt(offsetSelector.value);
+    translation = translationSelector.value;
     const url = new URL(window.location.href);
     url.searchParams.set('start', startDate);
     url.searchParams.set('offset', offsetValue);
+    url.searchParams.set('translation', translation);
     url.searchParams.set('plan', btoa(JSON.stringify(plan)));
-    window.history.replaceState({}, '', url);
+    if (pushNotReplace) {
+        window.history.pushState({}, '', url);
+    } else {
+        window.history.replaceState({}, '', url);
+    }
 }
 
 // Update the display of plan lists
@@ -166,16 +183,21 @@ function updatePlanListsDiv() {
     updateURL();
 }
 
-function valueUpdate() {
-  updateURL();
+function valueUpdate(pushNotReplace = false) {
+  updateURL(pushNotReplace);
   updateDayOfPlan();
   reportStatus();
   calculateReadings();
 }
 
+function valueUpdatePush() {
+    valueUpdate(true);
+}
+
 // Initializes the page on load
 function pageLogic() {
   populateList(listOfBooksElement, listOfBookIndexes, false);
+  populateTranslationSelector();
   today = getTodaysDateInLocalTimeAsIfUTC()
   setInitialValuesFromURL();
   updatePlanListsDiv();
@@ -262,9 +284,11 @@ function verseCountToAudioDuration(verseCount) {
 function calculateReadings() {
     const readingsLists = plan.map(listOfInts => listOfInts.flatMap(bookIndexToListOfChapters));
     const todaysReadings = readingsLists.flatMap(listOfChaptersToReadings);
-    const link = `https://www.biblegateway.com/passage/?search=${todaysReadings.join(',')}&version=NIVUK`;
+    const linkWithoutReadings = `https://www.biblegateway.com/passage/${bibleTranslations[translation]['read']}`
+    const link = linkWithoutReadings.replace('$', todaysReadings.join(','));
     const todaysListenings = readingsLists.flatMap(listOfChaptersToListenings);
-    const audioLink = `https://www.biblegateway.com/audio/suchet/nivuk/${todaysListenings.join(',')}`;
+    const audioLinkWithoutListenings = `https://www.biblegateway.com/audio/${bibleTranslations[translation]['listen']}`
+    const audioLink = audioLinkWithoutListenings.replace('$', todaysListenings.join(','));
     const verseCount = readingsLists.flatMap(listOfChaptersToVerseCount).reduce(function(prev,curr){
         return prev + curr;
     },0)
@@ -295,6 +319,7 @@ function setInitialValuesFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
     startDate = urlParams.get('start');
     offsetValue = urlParams.get('offset');
+    translation = urlParams.get('translation');
     const encodedPlan = urlParams.get("plan");
 
     // Set default values if not provided in the URL
@@ -311,6 +336,11 @@ function setInitialValuesFromURL() {
         offsetValue = offsetInt;
     }
     offsetSelector.value = offsetValue;
+
+    if (!translation || !(translation in bibleTranslations)) {
+        translation = 'NIVUK';
+        translationSelector.value = translation;
+    }
 
     if (!encodedPlan) {
         plan = defaultPlan;
@@ -330,6 +360,7 @@ function setInitialValuesFromURL() {
 
 // Event handler for input changes
 startDateSelector.addEventListener('input', valueUpdate);
+translationSelector.addEventListener('change', valueUpdatePush);
 offsetSelector.addEventListener('input', valueUpdate);
 
 // Additional event listeners

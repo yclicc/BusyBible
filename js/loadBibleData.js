@@ -1,5 +1,9 @@
 // Specify the path to the JSON file
 const filePath = '/data/bibledata.json';
+const filePaths = [
+  '/data/bibledata.json',
+  '/data/bibletranslations.json'
+]
 
 let bibleData = {}
 var listOfBooksSortable;
@@ -20,22 +24,22 @@ function addDataToBook(obj, key, value) {
       obj[key]["book"] = value.book
     }
   }
-  
-// Fetch the JSON file
-fetch(filePath)
+
+const fetchJSON = (filePath) => {
+  return fetch(filePath)
     .then(response => {
-        if (!response.ok) {
-            throw new Error(`Failed to fetch ${filePath}: ${response.status} ${response.statusText}`);
-        }
-        return response.json();
-    })
-    .then(data => {
-        // Do something with the loaded JSON data
-        data.forEach(function(record) {
-            addDataToBook(bibleData, record.book_index, record)
-        })
-        pageLogic();
-    })
-    .catch(error => {
-        console.error(`Error loading ${filePath}:`, error);
+      if (!response.ok) {
+        throw new Error(`Failed to fetch ${filePath}: ${response.status} ${response.statusText}`)
+      }
+      return response.json();
     });
+};
+
+Promise.all(filePaths.map(filePath => fetchJSON(filePath)))
+  .then(jsonFiles => {
+    jsonFiles[0].forEach(function(record) {
+      addDataToBook(bibleData, record.book_index, record)
+  })
+  bibleTranslations = jsonFiles[1];
+  pageLogic();
+})

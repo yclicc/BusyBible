@@ -1,0 +1,17 @@
+{
+    "NIVUK": {
+        "label": "NIVUK - David Suchet",
+        "read": "?search=$&version=NIVUK",
+        "listen": "suchet/nivuk/$"
+    },
+    "ESV": {
+        "label": "ESV - Max McLean",
+        "read": "?search=$&version=ESV",
+        "listen": "mclean/esv/$"
+    },
+    "CCB": {
+        "label": "CCB/当代圣经",
+        "read": "?search=$&version=CCB",
+        "listen": "biblica/ccb/$"
+    }
+}
