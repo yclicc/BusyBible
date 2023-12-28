@@ -15,6 +15,11 @@
   <h3><span id="statusReport"></span></h3>
   <div id="links"></div>
 
+  <div id="dateOffsetDiv">
+    <label for="offsetSelector">Select an offset:</label>
+    <input type="number" id="offsetSelector" step="1">
+  </div>
+
   <details>
     <summary>Settings</summary>
     <div class="collapsible-content">
@@ -23,11 +28,6 @@
       <input type="date" id="startDateSelector">
 
       <br>
-
-      <div id="dateOffsetDiv">
-      <label for="offsetSelector">Select an offset:</label>
-      <input type="number" id="offsetSelector" step="1">
-      </div>
 
       <div>
         <label for="numLists">How many lists:</label>
@@ -43,13 +43,13 @@
         <input type="number" id="selectList" name="selectList" min="1" max="1" value="1">
         <button id="clearSelectionButton">Clear Selection</button>
       </div>
-    
+
 
       <br>
 
       <div id="planEditor">
         <div id="listOfBooksDiv">
-        <ul id="listOfBooks">
+          <ul id="listOfBooks">
         </div>
         </ul>
         <div id="planListsDiv"></div>
