@@ -1,8 +1,8 @@
 // Specify the path to the JSON file
 const filePaths = [
-  '/data/bibledata.json',
-  '/data/bibletranslations.json',
-  '/data/presets.json'
+  'data/bibledata.json',
+  'data/bibletranslations.json',
+  'data/presets.json'
 ]
 
 let bibleData = {}
