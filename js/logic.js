@@ -4,6 +4,7 @@ const linksElement = document.getElementById('links');
 const startDateSelector = document.getElementById('startDateSelector');
 const offsetSelector = document.getElementById('offsetSelector');
 const translationSelector = document.getElementById('translationSelector');
+const presetPlanSelectorDiv = document.getElementById('presetPlanSelectorDiv');
 const numListsElement = document.getElementById('numLists');
 const selectListElement = document.getElementById('selectList');
 const listOfBooksElement = document.getElementById("listOfBooks");
@@ -17,6 +18,39 @@ let defaultPlan = [[40, 41, 42, 43], [1, 2, 3, 4, 5], [45, 46, 47, 48, 49, 50, 5
                     [19], [20, 21], [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], 
                     [23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39], 
                     [44]];
+
+
+function populatePresetPlanSelector() {
+    for (let planName in presets["plans"]) {
+        var button = document.createElement('button');
+        button.innerHTML = planName;
+        button.dataset.planName = planName;
+        button.classList.add('presetPlanButton')
+        if (planName in presets["plansTooltip"]) {
+            var tooltip = document.createElement('span');
+            tooltip.classList.add('tooltiptext');
+            tooltip.innerHTML = presets["plansTooltip"][planName];
+            button.appendChild(tooltip);
+        }
+        button.addEventListener('click', function () {
+            plan = presets["plans"][planName]
+            valueUpdate();
+        })
+        presetPlanSelectorDiv.appendChild(button);
+    }
+}
+
+function updateSelectedPresetPlan() {
+    buttons = document.getElementsByClassName('presetPlanButton');
+    for (let i = 0; i < buttons.length; i++) {
+        var button = buttons[i];
+        if (arrayEquals(plan, presets["plans"][button.dataset.planName])) {
+            button.classList.add('selected')
+        } else {
+            button.classList.remove('selected')
+        }
+    }
+}
 
 // Helper function for modulo operation, supporting negative values
 function mod(n, m) {
@@ -104,7 +138,11 @@ function populateList(listElement, bookIndexes, isDeletable, sublistIndex) {
 // Tests whether two arrays are equal
 function arrayEquals(array1, array2) {
     return (array1.length == array2.length) && array1.every(function(element, index) {
-        return element === array2[index];
+        if (Array.isArray(element) && Array.isArray(array2[index]) && element.length == array2[index].length) {
+            return arrayEquals(element, array2[index])
+        } else {
+            return element === array2[index];
+        }
     });
 }
 
@@ -227,6 +265,7 @@ function valueUpdate(pushNotReplace = false) {
   updateDayOfPlan();
   reportStatus();
   calculateReadings();
+  updateSelectedPresetPlan();
 }
 
 function valueUpdatePush() {
@@ -237,6 +276,7 @@ function valueUpdatePush() {
 function pageLogic() {
   populateList(listOfBooksElement, listOfBookIndexes, false);
   populateTranslationSelector();
+  populatePresetPlanSelector();
   today = getTodaysDateInLocalTimeAsIfUTC()
   setInitialValuesFromURL();
   updatePlanListsDiv();
