@@ -101,6 +101,39 @@ function populateList(listElement, bookIndexes, isDeletable, sublistIndex) {
     });
 }
 
+// Tests whether two arrays are equal
+function arrayEquals(array1, array2) {
+    return (array1.length == array2.length) && array1.every(function(element, index) {
+        return element === array2[index];
+    });
+}
+
+// Tests whether a list is found in the values of an object, and then returns the key if so
+function testInValues(obj, list) {
+    for (let k in obj) {
+        if (arrayEquals(obj[k], list)) {
+            return k;
+        }
+    }
+    return false;
+}
+
+function computeListLength(list) {
+    return list.flatMap(bookIndexToListOfChapters).length
+}
+
+// Populates a span element that heads a list with a title and info
+function populateListHeader(spanElement, bookIndexes, sublistIndex) {
+    let listName = testInValues(presets["lists"], bookIndexes);
+    if (listName) {
+        listName = listName + ' :'
+    } else {
+        listName = ''
+    }
+    let listLength = computeListLength(bookIndexes);
+    spanElement.innerHTML = `List ${sublistIndex + 1}: ${listName}${listLength} Chapters`;
+}
+
 // Populate translation selector
 function populateTranslationSelector() {
     for (const key in bibleTranslations) {
@@ -176,9 +209,14 @@ function updateURL(pushNotReplace = false) {
 function updatePlanListsDiv() {
     planListsDiv.innerHTML = "";
     plan.forEach((sublist, index) => {
+        var sublistDiv = document.createElement("div");
+        var sublistHeader = document.createElement("span");
+        populateListHeader(sublistHeader, sublist, index);
+        sublistDiv.append(sublistHeader);
         var sublistUl = document.createElement("ul");
         populateList(sublistUl, sublist, true, index);
-        planListsDiv.append(sublistUl);
+        sublistDiv.append(sublistUl);
+        planListsDiv.append(sublistDiv);
     });
     updateURL();
 }
@@ -226,7 +264,7 @@ function bookIndexToListOfChapters(bookIndex) {
   }
 }
 
-// Convert a listOfChapters to a list of JSON objects, then extract the desired key
+// Convert a listOfChapters to a list of JSON objects, then extract the desired key for the day of the plan
 function listOfChaptersToExtractKey(listOfChapters, key) {
     if (listOfChapters === undefined || listOfChapters.length == 0) {
         return []

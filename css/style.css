@@ -70,8 +70,6 @@ details[open] summary {
 
 #planEditor>div>ul {
     flex: 1;
-    border: 1px solid #ddd;
-    background-color: #dbdbdb;
     -webkit-user-select: none;
     -ms-user-select: none;
     user-select: none;
@@ -83,10 +81,14 @@ h4 {
 }
 
 #listOfBooksDiv ul,
-#planListsDiv ul {
+#planListsDiv>div>ul {
     list-style: none;
-    padding: 0;
+    padding: 10px;
     margin: 0;
+}
+
+#planListsDiv>div {
+    padding: 10px;
 }
 
 .list-group-item {

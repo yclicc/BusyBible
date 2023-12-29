@@ -1,8 +1,8 @@
 // Specify the path to the JSON file
-const filePath = '/data/bibledata.json';
 const filePaths = [
   '/data/bibledata.json',
-  '/data/bibletranslations.json'
+  '/data/bibletranslations.json',
+  '/data/presets.json'
 ]
 
 let bibleData = {}
@@ -41,5 +41,6 @@ Promise.all(filePaths.map(filePath => fetchJSON(filePath)))
       addDataToBook(bibleData, record.book_index, record)
   })
   bibleTranslations = jsonFiles[1];
+  presets = jsonFiles[2];
   pageLogic();
 })
