@@ -23,18 +23,18 @@ let defaultPlan = [[40, 41, 42, 43], [1, 2, 3, 4, 5], [45, 46, 47, 48, 49, 50, 5
 function populatePresetPlanSelector() {
     for (let planName in presets["plans"]) {
         var button = document.createElement('button');
-        button.innerHTML = planName;
+        button.innerHTML = presets["plansMeta"][planName]["name"];
         button.dataset.planName = planName;
         button.classList.add('presetPlanButton')
-        if (planName in presets["plansTooltip"]) {
+        if (planName in presets["plansMeta"]) {
             var tooltip = document.createElement('span');
             tooltip.classList.add('tooltiptext');
-            tooltip.innerHTML = presets["plansTooltip"][planName];
+            tooltip.innerHTML = presets["plansMeta"][planName]["tooltip"];
             button.appendChild(tooltip);
         }
         button.addEventListener('click', function () {
-            plan = presets["plans"][planName]
-            valueUpdate();
+            plan = structuredClone(presets["plans"][planName]);
+            updateListsSelectors();
         })
         presetPlanSelectorDiv.appendChild(button);
     }
@@ -205,6 +205,7 @@ function updateListsSelectors() {
     numLists.value = plan.length;
     selectList.max = plan.length;
     valueUpdate();
+
 }
 
 function increment() {
@@ -224,7 +225,7 @@ function deleteBookFromPlan(listItem, sublistIndex) {
     var index = Array.from(listItem.parentNode.children).indexOf(listItem);
     plan[sublistIndex].splice(index, 1);
     listItem.parentNode.removeChild(listItem);
-    updatePlanListsDiv();
+    updateListsSelectors();
 }
 
 // Updates the URL with current parameters
@@ -236,7 +237,12 @@ function updateURL(pushNotReplace = false) {
     url.searchParams.set('start', startDate);
     url.searchParams.set('offset', offsetValue);
     url.searchParams.set('translation', translation);
-    url.searchParams.set('plan', btoa(JSON.stringify(plan)));
+    let presetPlan = testInValues(presets["plans"], plan)
+    if (presetPlan) {
+        url.searchParams.set('plan', presetPlan);
+    } else {
+        url.searchParams.set('plan', btoa(JSON.stringify(plan)));
+    }
     if (pushNotReplace) {
         window.history.pushState({}, '', url);
     } else {
@@ -423,6 +429,8 @@ function setInitialValuesFromURL() {
 
     if (!encodedPlan) {
         plan = defaultPlan;
+    } else if (encodedPlan in presets["plans"]) {
+        plan = structuredClone(presets["plans"][encodedPlan]);
     } else {
         const decodedPlan = atob(encodedPlan);
         plan = JSON.parse(decodedPlan);

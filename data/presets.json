@@ -1,15 +1,27 @@
 {
     "plans":{
-        "BusyBible x10": [[40, 41, 42, 43], [1, 2, 3, 4, 5], [45, 46, 47, 48, 49, 50, 51, 58], [52, 53, 54, 55, 56, 57, 59, 60, 61, 62, 63, 64, 65, 66], [18, 22], [19], [20, 21], [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], [23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39], [44]],
-        "BusyBible x5" : [[40, 41, 42, 43, 44, 66], [1, 2, 3, 4, 5], [45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65], [6, 7, 9, 10, 11, 12, 23, 24, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39], [19, 20, 18, 22, 8, 25, 21, 17, 27, 15, 16, 13, 14]],
-        "Grant Horner x10": [[40, 41, 42, 43], [1, 2, 3, 4, 5], [45, 46, 47, 48, 49, 50, 51, 58], [52, 53, 54, 55, 56, 57, 59, 60, 61, 62, 63, 64, 65, 66], [18, 21, 22], [19], [20], [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], [23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39], [44]],
-        "Pseudo-M'Cheyne x4": [[1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14], [40, 41, 42, 43, 19, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66], [15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39], [44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 40, 41, 42, 43, 19]]
+        "BB10": [[40, 41, 42, 43], [1, 2, 3, 4, 5], [45, 46, 47, 48, 49, 50, 51, 58], [52, 53, 54, 55, 56, 57, 59, 60, 61, 62, 63, 64, 65, 66], [18, 22], [19], [20, 21], [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], [23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39], [44]],
+        "BB5" : [[40, 41, 42, 43, 44, 66], [1, 2, 3, 4, 5], [45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65], [6, 7, 9, 10, 11, 12, 23, 24, 26, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39], [19, 20, 18, 22, 8, 25, 21, 17, 27, 15, 16, 13, 14]],
+        "GH10": [[40, 41, 42, 43], [1, 2, 3, 4, 5], [45, 46, 47, 48, 49, 50, 51, 58], [52, 53, 54, 55, 56, 57, 59, 60, 61, 62, 63, 64, 65, 66], [18, 21, 22], [19], [20], [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], [23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39], [44]],
+        "PMC4": [[1, 2, 3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14], [40, 41, 42, 43, 19, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66], [15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39], [44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 40, 41, 42, 43, 19]]
     },
-    "plansTooltip": {
-        "Grant Horner x10": "Gives 10 readings per day, gets through the Bible in just over half a year, whilst some parts are covered many times more. Originally devised by Professor Grant Horner.",
-        "BusyBible x10": "The default, 10 readings per day, identical to Grant Horner's plan except Ecclesiastes is moved to the same list as Proverbs.",
-        "BusyBible x5": "5 Readings per day, two from the New Testament and one each from the traditional Hebrew divisions (and order) of the Old Testament: Torah, Prophets, and Writings. Takes a little over a year.",
-        "Pseudo-M'Cheyne x4": "Similar to the 1 year plan devised by Robert Murray M'Cheyne, but takes slightly longer than a year to read the whole Bible as it has precisely 4 chapters of readings per day."
+    "plansMeta": {
+        "BB10": {
+            "name": "BusyBible x10",
+            "tooltip": "The default, 10 readings per day, identical to Grant Horner's plan except Ecclesiastes is moved to the same list as Proverbs."
+        },
+        "BB5": {
+            "name": "BusyBible x5",
+            "tooltip": "5 Readings per day, two from the New Testament and one each from the traditional Hebrew divisions (and order) of the Old Testament: Torah, Prophets, and Writings. Takes a little over a year."
+        },
+        "GH10": {
+            "name": "Grant Horner x10",
+            "tooltip": "Gives 10 readings per day, gets through the Bible in just over half a year, whilst some parts are covered many times more. Originally devised by Professor Grant Horner."
+        },
+        "PMC4": {
+            "name": "Pseudo-M'Cheyne x4",
+            "tooltip": "Similar to the 1 year plan devised by Robert Murray M'Cheyne, but takes slightly longer than a year to read the whole Bible as it has precisely 4 chapters of readings per day."
+        } 
     },
     "lists": {
         "Gospels": [40, 41, 42, 43],

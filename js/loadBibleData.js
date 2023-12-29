@@ -6,6 +6,8 @@ const filePaths = [
 ]
 
 let bibleData = {}
+let bibleTranslations = {};
+let presets = {};
 var listOfBooksSortable;
 var listOfSortableLists;
 var selectedBooks = [];
