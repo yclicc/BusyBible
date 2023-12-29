@@ -126,7 +126,7 @@ function computeListLength(list) {
 function populateListHeader(spanElement, bookIndexes, sublistIndex) {
     let listName = testInValues(presets["lists"], bookIndexes);
     if (listName) {
-        listName = listName + ' :'
+        listName = listName + ' : '
     } else {
         listName = ''
     }
@@ -186,6 +186,7 @@ function deleteBookFromPlan(listItem, sublistIndex) {
     var index = Array.from(listItem.parentNode.children).indexOf(listItem);
     plan[sublistIndex].splice(index, 1);
     listItem.parentNode.removeChild(listItem);
+    updatePlanListsDiv();
 }
 
 // Updates the URL with current parameters
