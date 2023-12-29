@@ -1,32 +1,52 @@
 {
     "NIVUK": {
         "label": "NIVUK - David Suchet",
-        "read": "?search=$&version=NIVUK",
-        "listen": "suchet/nivuk/$"
+        "read": "NIVUK",
+        "listen": "suchet/nivuk/"
     },
     "ESV": {
         "label": "ESV - Max McLean",
-        "read": "?search=$&version=ESV",
-        "listen": "mclean/esv/$"
+        "read": "ESV",
+        "listen": "mclean/esv/"
     },
     "CCB": {
         "label": "CCB / 当代圣经",
-        "read": "?search=$&version=CCB",
-        "listen": "biblica/ccb/$"
+        "read": "CCB",
+        "listen": "biblica/ccb/"
     },
     "NVI": {
         "label": "NVI (Español) - Rafael Cruz",
-        "read": "?search=$&version=NVI",
-        "listen": "single/nvi/$"
+        "read": "NVI",
+        "listen": "single/nvi/"
+    },
+    "NVI-PT": {
+        "label": "NVI-PT (Português)",
+        "read": "NVI-PT",
+        "listen": "biblica/nvi-pt/"
+    },
+    "BDS": {
+        "label": "BDS (Français)",
+        "read": "BDS",
+        "listen": "biblica/bds/"
     },
     "NAV": {
         "label": "NAV / العربية: كتاب الحياة",
-        "read": "?search=$&version=NAV",
-        "listen": "biblica/nav/$"
+        "read": "NAV",
+        "listen": "biblica/nav/"
     },
     "NTLR": {
         "label": "NTLR (Română)",
-        "read": "?search=$&version=NTLR",
-        "listen": "biblica/ntlr/$"
+        "read": "NTLR",
+        "listen": "biblica/ntlr/"
+    },
+    "NRT": {
+        "label": "NRT (Русский)",
+        "read": "NRT",
+        "listen": "biblica/nrt/"
+    },
+    "TNCV": {
+        "label": "TNCV (ภาษาไทย)",
+        "read": "TNCV",
+        "listen": "biblica/tncv/"
     }
 }

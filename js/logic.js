@@ -363,10 +363,10 @@ function verseCountToAudioDuration(verseCount) {
 function calculateReadings() {
     const readingsLists = plan.map(listOfInts => listOfInts.flatMap(bookIndexToListOfChapters));
     const todaysReadings = readingsLists.flatMap(listOfChaptersToReadings);
-    const linkWithoutReadings = `https://www.biblegateway.com/passage/${bibleTranslations[translation]['read']}`
+    const linkWithoutReadings = `https://www.biblegateway.com/passage/?search=$&version=${bibleTranslations[translation]['read']}`
     const link = linkWithoutReadings.replace('$', todaysReadings.join(','));
     const todaysListenings = readingsLists.flatMap(listOfChaptersToListenings);
-    const audioLinkWithoutListenings = `https://www.biblegateway.com/audio/${bibleTranslations[translation]['listen']}`
+    const audioLinkWithoutListenings = `https://www.biblegateway.com/audio/${bibleTranslations[translation]['listen']}$`
     const audioLink = audioLinkWithoutListenings.replace('$', todaysListenings.join(','));
     const verseCount = readingsLists.flatMap(listOfChaptersToVerseCount).reduce(function(prev,curr){
         return prev + curr;
