@@ -10,8 +10,23 @@
         "listen": "mclean/esv/$"
     },
     "CCB": {
-        "label": "CCB/当代圣经",
+        "label": "CCB / 当代圣经",
         "read": "?search=$&version=CCB",
         "listen": "biblica/ccb/$"
+    },
+    "NVI": {
+        "label": "NVI (Español) - Rafael Cruz",
+        "read": "?search=$&version=NVI",
+        "listen": "single/nvi/$"
+    },
+    "NAV": {
+        "label": "NAV / العربية: كتاب الحياة",
+        "read": "?search=$&version=NAV",
+        "listen": "biblica/nav/$"
+    },
+    "NTLR": {
+        "label": "NTLR (Română)",
+        "read": "?search=$&version=NTLR",
+        "listen": "biblica/ntlr/$"
     }
 }

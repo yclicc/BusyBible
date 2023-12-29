@@ -9,7 +9,7 @@
         "Grant Horner x10": "Gives 10 readings per day, gets through the Bible in just over half a year, whilst some parts are covered many times more. Originally devised by Professor Grant Horner.",
         "BusyBible x10": "The default, 10 readings per day, identical to Grant Horner's plan except Ecclesiastes is moved to the same list as Proverbs.",
         "BusyBible x5": "5 Readings per day, two from the New Testament and one each from the traditional Hebrew divisions (and order) of the Old Testament: Torah, Prophets, and Writings. Takes a little over a year.",
-        "Pseudo-M'Cheyne x4": "Similar to the 1 year plan devised by Robert Murray M'Cheyne, but takes slightly longer than a year as it has precisely 4 chapters of readings per day."
+        "Pseudo-M'Cheyne x4": "Similar to the 1 year plan devised by Robert Murray M'Cheyne, but takes slightly longer than a year to read the whole Bible as it has precisely 4 chapters of readings per day."
     },
     "lists": {
         "Gospels": [40, 41, 42, 43],

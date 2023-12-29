@@ -418,8 +418,8 @@ function setInitialValuesFromURL() {
 
     if (!translation || !(translation in bibleTranslations)) {
         translation = 'NIVUK';
-        translationSelector.value = translation;
     }
+    translationSelector.value = translation;
 
     if (!encodedPlan) {
         plan = defaultPlan;
