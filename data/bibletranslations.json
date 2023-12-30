@@ -9,6 +9,11 @@
         "read": "ESV",
         "listen": "mclean/esv/"
     },
+    "NIVDram": {
+        "label": "NIV Dramatized",
+        "read": "NIV",
+        "listen": "dramatized/niv/"
+    },
     "CCB": {
         "label": "CCB / 当代圣经",
         "read": "CCB",
