@@ -100,18 +100,26 @@ h4 {
     border: 1px solid rgba(0, 0, 0, 0.125);
 }
 
-#presetPlanSelectorDiv > button {
+.buttonContainer>button {
     position: relative;
     margin-left: 4px;
 }
 
-#presetPlanSelectorDiv > button.selected {
+.buttonContainer>button.selected {
     background-color: #3498db;
     color: #fff;
-} 
+}
+
+#copyLinkDiv>button.deselected {
+    background-color: buttonface;
+    color: black;
+    transition-property: background-color, color;
+    transition-duration: .5s;
+    transition-timing-function: ease-in;
+}
 
 /* Tooltip text */
-#presetPlanSelectorDiv > button > .tooltiptext {
+.buttonContainer>button>.tooltiptext {
     visibility: hidden;
     width: 200px;
     background-color: black;
@@ -124,9 +132,9 @@ h4 {
     bottom: 150%;
     left: 50%;
     margin-left: -100px;
-  }
+}
 
-#presetPlanSelectorDiv > button > .tooltiptext::after {
+.buttonContainer>button>.tooltiptext::after {
     content: "";
     position: absolute;
     top: 100%;
@@ -135,10 +143,9 @@ h4 {
     border-width: 5px;
     border-style: solid;
     border-color: black transparent transparent transparent;
-  }
-    
-  /* Show the tooltip text when you mouse over the tooltip container */
-  #presetPlanSelectorDiv > button:hover > .tooltiptext {
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.buttonContainer>button:hover>.tooltiptext {
     visibility: visible;
-  }
-  
+}

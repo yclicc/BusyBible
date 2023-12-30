@@ -13,11 +13,6 @@ const planListsDiv = document.getElementById("planListsDiv");
 // Initial global variables
 let startDate, translation, today, offsetValue;
 let plan = [];
-let defaultPlan = [[40, 41, 42, 43], [1, 2, 3, 4, 5], [45, 46, 47, 48, 49, 50, 51, 58], 
-                    [52, 53, 54, 55, 56, 57, 59, 60, 61, 62, 63, 64, 65, 66], [18, 22], 
-                    [19], [20, 21], [6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17], 
-                    [23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39], 
-                    [44]];
 
 
 function populatePresetPlanSelector() {
@@ -93,27 +88,27 @@ function appendDeleteButton(listItem, sublistIndex) {
 
 // Appends circled numbers to list items
 function appendNumberInCircle(element, index) {
-  let circledNumber = getCircledNumber(index);
-  element.innerHTML += `<span class="circled-number">${circledNumber}</span>`;
+    let circledNumber = getCircledNumber(index);
+    element.innerHTML += `<span class="circled-number">${circledNumber}</span>`;
 }
 
 // Returns the Unicode character for a circled number
 function getCircledNumber(index) {
-  if (index <= 20) {
-      return String.fromCodePoint(0x245F + index);
-  } else if (index <= 35) {
-      return String.fromCodePoint(0x3250 - 20 + index);
-  } else if (index <= 50) {
-      return String.fromCodePoint(0x32B1 - 36 + index);
-  } else {
-      return `(${index})`;
-  }
+    if (index <= 20) {
+        return String.fromCodePoint(0x245F + index);
+    } else if (index <= 35) {
+        return String.fromCodePoint(0x3250 - 20 + index);
+    } else if (index <= 50) {
+        return String.fromCodePoint(0x32B1 - 36 + index);
+    } else {
+        return `(${index})`;
+    }
 }
 
 // Event handler for book selection
 function selectBook(bookIndex, listItem) {
-  appendNumberInCircle(listItem, selectedBooks.length + 1);
-  selectedBooks.push(bookIndex);
+    appendNumberInCircle(listItem, selectedBooks.length + 1);
+    selectedBooks.push(bookIndex);
 }
 
 // Populates a list element with book entries
@@ -137,7 +132,7 @@ function populateList(listElement, bookIndexes, isDeletable, sublistIndex) {
 
 // Tests whether two arrays are equal
 function arrayEquals(array1, array2) {
-    return (array1.length == array2.length) && array1.every(function(element, index) {
+    return (array1.length == array2.length) && array1.every(function (element, index) {
         if (Array.isArray(element) && Array.isArray(array2[index]) && element.length == array2[index].length) {
             return arrayEquals(element, array2[index])
         } else {
@@ -228,14 +223,19 @@ function deleteBookFromPlan(listItem, sublistIndex) {
     updateListsSelectors();
 }
 
-// Updates the URL with current parameters
-function updateURL(pushNotReplace = false) {
+// Generates a URL pointing to the current settings
+function generateURL(permalink = false) {
     startDate = startDateSelector.value;
     offsetValue = parseInt(offsetSelector.value);
     translation = translationSelector.value;
     const url = new URL(window.location.href);
-    url.searchParams.set('start', startDate);
-    url.searchParams.set('offset', offsetValue);
+    if (permalink) {
+        url.searchParams.delete('start');
+        url.searchParams.set('offset', dayOfPlan);
+    } else {
+        url.searchParams.set('start', startDate);
+        url.searchParams.set('offset', offsetValue);
+    }
     url.searchParams.set('translation', translation);
     let presetPlan = testInValues(presets["plans"], plan)
     if (presetPlan) {
@@ -243,11 +243,22 @@ function updateURL(pushNotReplace = false) {
     } else {
         url.searchParams.set('plan', btoa(JSON.stringify(plan)));
     }
+    return url
+}
+
+// Updates the URL with current parameters
+function updateURL(pushNotReplace = false) {
+    const url = generateURL();
     if (pushNotReplace) {
         window.history.pushState({}, '', url);
     } else {
         window.history.replaceState({}, '', url);
     }
+}
+
+function copyURLtoClipboard(permalink = false) {
+    const url = generateURL(permalink);
+    navigator.clipboard.writeText(url.href);
 }
 
 // Update the display of plan lists
@@ -267,11 +278,11 @@ function updatePlanListsDiv() {
 }
 
 function valueUpdate(pushNotReplace = false) {
-  updateURL(pushNotReplace);
-  updateDayOfPlan();
-  reportStatus();
-  calculateReadings();
-  updateSelectedPresetPlan();
+    updateURL(pushNotReplace);
+    updateDayOfPlan();
+    reportStatus();
+    calculateReadings();
+    updateSelectedPresetPlan();
 }
 
 function valueUpdatePush() {
@@ -280,13 +291,13 @@ function valueUpdatePush() {
 
 // Initializes the page on load
 function pageLogic() {
-  populateList(listOfBooksElement, listOfBookIndexes, false);
-  populateTranslationSelector();
-  populatePresetPlanSelector();
-  today = getTodaysDateInLocalTimeAsIfUTC()
-  setInitialValuesFromURL();
-  updatePlanListsDiv();
-  valueUpdate();
+    populateList(listOfBooksElement, listOfBookIndexes, false);
+    populateTranslationSelector();
+    populatePresetPlanSelector();
+    today = getTodaysDateInLocalTimeAsIfUTC()
+    setInitialValuesFromURL();
+    updatePlanListsDiv();
+    valueUpdate();
 };
 
 // Updates the status report on the page
@@ -304,11 +315,11 @@ function updateDayOfPlan() {
 }
 
 function bookIndexToListOfChapters(bookIndex) {
-  if (bookIndex === undefined) {
-      return []
-  } else {
-      return bibleData[bookIndex]["chapters"]
-  }
+    if (bookIndex === undefined) {
+        return []
+    } else {
+        return bibleData[bookIndex]["chapters"]
+    }
 }
 
 // Convert a listOfChapters to a list of JSON objects, then extract the desired key for the day of the plan
@@ -321,7 +332,7 @@ function listOfChaptersToExtractKey(listOfChapters, key) {
 }
 
 function listOfChaptersToReadings(listOfChapters) {
-  return listOfChaptersToExtractKey(listOfChapters, "title")
+    return listOfChaptersToExtractKey(listOfChapters, "title")
 }
 
 function listOfChaptersToListenings(listOfChapters) {
@@ -335,32 +346,32 @@ function listOfChaptersToVerseCount(listOfChapters) {
 function formatTime(seconds) {
     // Ensure the input is a positive number
     seconds = Math.abs(seconds);
-  
+
     // Calculate days, hours, minutes, and remaining seconds
     const days = Math.floor(seconds / (24 * 3600));
     const hours = Math.floor((seconds % (24 * 3600)) / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = Math.floor(seconds % 60);
-  
+
     // Construct the formatted time string
     let formattedTime = '';
     if (days > 0) {
-      formattedTime += days + 'D:';
+        formattedTime += days + 'D:';
     }
     if (hours > 0 || days > 0) {
-      formattedTime += (hours < 10 ? '0' : '') + hours + 'h:';
+        formattedTime += (hours < 10 ? '0' : '') + hours + 'h:';
     }
     if (minutes > 0 || hours > 0 || days > 0) {
-      formattedTime += (minutes < 10 ? '0' : '') + minutes + 'm:';
+        formattedTime += (minutes < 10 ? '0' : '') + minutes + 'm:';
     }
     formattedTime += (remainingSeconds < 10 ? '0' : '') + remainingSeconds + 's';
-  
+
     return formattedTime;
-  }  
+}
 
 function verseCountToAudioDuration(verseCount) {
     // The complete Suchet recording is 80 hours long
-    const secondsPerVerse = 80*60*60 / 31102
+    const secondsPerVerse = 80 * 60 * 60 / 31102
     const estimatedSecondsDuration = secondsPerVerse * verseCount;
     return formatTime(estimatedSecondsDuration);
 }
@@ -374,9 +385,9 @@ function calculateReadings() {
     const todaysListenings = readingsLists.flatMap(listOfChaptersToListenings);
     const audioLinkWithoutListenings = `https://www.biblegateway.com/audio/${bibleTranslations[translation]['listen']}$`
     const audioLink = audioLinkWithoutListenings.replace('$', todaysListenings.join(','));
-    const verseCount = readingsLists.flatMap(listOfChaptersToVerseCount).reduce(function(prev,curr){
+    const verseCount = readingsLists.flatMap(listOfChaptersToVerseCount).reduce(function (prev, curr) {
         return prev + curr;
-    },0)
+    }, 0)
     const estimatedAudioDuration = verseCountToAudioDuration(verseCount);
     linksElement.innerHTML = "Today's readings are: " + todaysReadings.join(', ') + '<br />' +
         `Verses: ${verseCount}` + '<br />' +
@@ -427,6 +438,9 @@ function setInitialValuesFromURL() {
     }
     translationSelector.value = translation;
 
+
+    let defaultPlan = Object.values(presets["plans"])[0];
+
     if (!encodedPlan) {
         plan = defaultPlan;
     } else if (encodedPlan in presets["plans"]) {
@@ -456,6 +470,26 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
         numLists.value = plan.length;
     });
+})
+
+// Event listeners for link copying
+document.getElementById('copyPlanLink').addEventListener('click', function (event) {
+    copyURLtoClipboard(false);
+    event.target.classList.remove('deselected');
+    event.target.classList.add('selected');
+    setTimeout(function () {
+        event.target.classList.add('deselected');
+        event.target.classList.remove('selected');
+    }, 1000)
+})
+document.getElementById('copyPassagesLink').addEventListener('click', function (event) {
+    copyURLtoClipboard(true);
+    event.target.classList.remove('deselected');
+    event.target.classList.add('selected');
+    setTimeout(function () {
+        event.target.classList.add('deselected');
+        event.target.classList.remove('selected');
+    }, 1000)
 })
 
 // Event listeners for plan manipulation
