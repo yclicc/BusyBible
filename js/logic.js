@@ -398,8 +398,8 @@ function calculateReadings() {
     linksElement.innerHTML = "Today's readings are: <b>" + todaysReadings.join(', ') + '</b><br />' +
         `Verses: <b>${verseCount}</b>` + '<br />' +
         `Estimated audio duration: <b>${estimatedAudioDuration}` + '</b><br />' +
-        `<a href="${link}"><b>Read</b> on BibleGateway 📖</a>` + '<br />' +
-        `<a href="${audioLink}"><b>Listen</b> on BibleGateway 🔊</a>`;
+        `<a href="${link}"><b>Read</b> 📖 on BibleGateway</a>` + '<br />' +
+        `<a href="${audioLink}"><b>Listen</b> 🔊 on BibleGateway</a>`;
     return todaysReadings;
 }
 
