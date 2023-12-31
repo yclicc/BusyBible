@@ -448,7 +448,7 @@ function setInitialValuesFromURL() {
     let defaultPlan = Object.values(presets["plans"])[0];
 
     if (!encodedPlan) {
-        plan = defaultPlan;
+        plan = structuredClone(defaultPlan);
     } else if (encodedPlan in presets["plans"]) {
         plan = structuredClone(presets["plans"][encodedPlan]);
     } else {
