@@ -13,6 +13,7 @@ const planListsDiv = document.getElementById("planListsDiv");
 // Initial global variables
 let startDate, translation, today, offsetValue;
 let plan = [];
+let presetPlan = 'Custom';
 
 
 function populatePresetPlanSelector() {
@@ -37,14 +38,18 @@ function populatePresetPlanSelector() {
 
 function updateSelectedPresetPlan() {
     buttons = document.getElementsByClassName('presetPlanButton');
+    let presetPlanUpdate = 'Custom'
     for (let i = 0; i < buttons.length; i++) {
         var button = buttons[i];
         if (arrayEquals(plan, presets["plans"][button.dataset.planName])) {
+            presetPlanUpdate = presets["plansMeta"][button.dataset.planName]["name"]
             button.classList.add('selected')
         } else {
             button.classList.remove('selected')
         }
     }
+    presetPlan = presetPlanUpdate;
+
 }
 
 // Helper function for modulo operation, supporting negative values
@@ -280,9 +285,9 @@ function updatePlanListsDiv() {
 function valueUpdate(pushNotReplace = false) {
     updateURL(pushNotReplace);
     updateDayOfPlan();
+    updateSelectedPresetPlan();
     reportStatus();
     calculateReadings();
-    updateSelectedPresetPlan();
 }
 
 function valueUpdatePush() {
@@ -303,9 +308,10 @@ function pageLogic() {
 // Updates the status report on the page
 function reportStatus() {
     statusReportElement.innerHTML =
-        `You started the plan on ${startDate} <br />
-    The offset is ${offsetValue}<br />
-    So you are on day ${dayOfPlan + 1}`
+        `The plan is <b>${presetPlan}</b> <br />
+    You started the plan on <b>${startDate}</b> <br />
+    The offset is <b>${offsetValue}</b><br />
+    So you are on day <b>${dayOfPlan + 1}</b>`
 }
 
 // Updates the day of the plan
@@ -389,11 +395,11 @@ function calculateReadings() {
         return prev + curr;
     }, 0)
     const estimatedAudioDuration = verseCountToAudioDuration(verseCount);
-    linksElement.innerHTML = "Today's readings are: " + todaysReadings.join(', ') + '<br />' +
-        `Verses: ${verseCount}` + '<br />' +
-        `Estimated audio duration: ${estimatedAudioDuration}` + '<br />' +
-        `<a href="${link}">Read on BibleGateway 📖</a>` + '<br />' +
-        `<a href="${audioLink}">Listen on BibleGateway 🔊</a>`;
+    linksElement.innerHTML = "Today's readings are: <b>" + todaysReadings.join(', ') + '</b><br />' +
+        `Verses: <b>${verseCount}</b>` + '<br />' +
+        `Estimated audio duration: <b>${estimatedAudioDuration}` + '</b><br />' +
+        `<a href="${link}"><b>Read</b> on BibleGateway 📖</a>` + '<br />' +
+        `<a href="${audioLink}"><b>Listen</b> on BibleGateway 🔊</a>`;
     return todaysReadings;
 }
 
