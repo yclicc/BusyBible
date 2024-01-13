@@ -13,6 +13,7 @@ const planListsDiv = document.getElementById("planListsDiv");
 // Initial global variables
 let startDate, translation, today, offsetValue;
 let plan = [];
+let speed = [];
 let presetPlan = 'Custom';
 
 
@@ -210,12 +211,14 @@ function updateListsSelectors() {
 
 function increment() {
     plan.push([]);
+    speed.push([1, 1, 0])
     updateListsSelectors();
 }
 
 function decrement() {
     if (plan.length > 1) {
         plan.pop();
+        speed.pop();
     }
     updateListsSelectors();
 }
@@ -248,6 +251,18 @@ function generateURL(permalink = false) {
     } else {
         url.searchParams.set('plan', btoa(JSON.stringify(plan)));
     }
+    
+    if (arrayEquals(speed, generateDefaultSpeedFromPlan(plan))) {
+        url.searchParams.delete('speed');
+    } else {
+        let presetSpeed = testInValues(presets["speeds"], speed);
+        if (presetSpeed) {
+            url.searchParams.set('speed', presetSpeed);
+        } else {
+            url.searchParams.set('speed', btoa(JSON.stringify(speed)))
+        }
+    }
+    
     return url
 }
 
@@ -329,24 +344,34 @@ function bookIndexToListOfChapters(bookIndex) {
 }
 
 // Convert a listOfChapters to a list of JSON objects, then extract the desired key for the day of the plan
-function listOfChaptersToExtractKey(listOfChapters, key) {
+function listOfChaptersToExtractKey(listOfChapters, listIndex, key) {
     if (listOfChapters === undefined || listOfChapters.length == 0) {
         return []
     } else {
-        return [listOfChapters[mod(dayOfPlan, listOfChapters.length)][key]]
+        // chaptersPerActiveDay is e.g. 3 for 3 chapters when this list is active
+        // activeEveryXDays is e.g. 5 for one day in 5 the list is active
+        // activeDayIsDay is e.g. 0 for the first in every 5 days
+        const [chaptersPerActiveDay, activeEveryXDays, activeDayIsDay] = speed[listIndex]; 
+        if ((dayOfPlan % activeEveryXDays) == activeDayIsDay) {
+            const chaptersReadBefore = Math.floor(dayOfPlan / activeEveryXDays) * chaptersPerActiveDay;
+            const listOfChapterIndexes = [...Array(chaptersPerActiveDay).keys()].map(i => i + chaptersReadBefore);
+            return listOfChapterIndexes.map(index => listOfChapters[mod(index, listOfChapters.length)][key]);
+        } else {
+            return [];
+        }
     }
 }
 
-function listOfChaptersToReadings(listOfChapters) {
-    return listOfChaptersToExtractKey(listOfChapters, "title")
+function listOfChaptersToReadings(listOfChapters, listIndex) {
+    return listOfChaptersToExtractKey(listOfChapters, listIndex, "title")
 }
 
-function listOfChaptersToListenings(listOfChapters) {
-    return listOfChaptersToExtractKey(listOfChapters, "abbrev")
+function listOfChaptersToListenings(listOfChapters, listIndex) {
+    return listOfChaptersToExtractKey(listOfChapters, listIndex, "abbrev")
 }
 
-function listOfChaptersToVerseCount(listOfChapters) {
-    return listOfChaptersToExtractKey(listOfChapters, "verses")
+function listOfChaptersToVerseCount(listOfChapters, listIndex) {
+    return listOfChaptersToExtractKey(listOfChapters, listIndex, "verses")
 }
 
 function formatTime(seconds) {
@@ -416,6 +441,15 @@ function isPlanDataValid(data) {
     return Array.isArray(data) && data.length > 0 && data.every(sublist => isArrayValid(sublist, min, max));
 }
 
+function isSpeedDataValid(data, lengthOfPlan) {
+    return Array.isArray(data) && data.length == lengthOfPlan && data.every(sublist => sublist.length == 3);
+}
+
+// Returns the default, 1 chapter per day from every list, from the plan
+function generateDefaultSpeedFromPlan(plan) {
+    return plan.map(sublist => [1, 1, 0]);
+}
+
 // Sets initial values from URL parameters
 function setInitialValuesFromURL() {
     const urlParams = new URLSearchParams(window.location.search);
@@ -423,6 +457,7 @@ function setInitialValuesFromURL() {
     offsetValue = urlParams.get('offset');
     translation = urlParams.get('translation');
     const encodedPlan = urlParams.get("plan");
+    const encodedSpeed = urlParams.get("speed");
 
     // Set default values if not provided in the URL
     const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -456,6 +491,18 @@ function setInitialValuesFromURL() {
         plan = JSON.parse(decodedPlan);
         if (!isPlanDataValid(plan)) {
             plan = defaultPlan;
+        }
+    }
+
+    if (!encodedSpeed) {
+        speed = generateDefaultSpeedFromPlan(plan);
+    } else if (encodedSpeed in presets["speeds"]) {
+        speed = structuredClone(presets["speeds"][encodedSpeed]);
+    } else {
+        const decodedSpeed = atob(encodedSpeed);
+        speed = JSON.parse(decodedSpeed);
+        if (!isSpeedDataValid(speed, plan.length)) {
+            speed = generateDefaultSpeedFromPlan(plan);
         }
     }
 
