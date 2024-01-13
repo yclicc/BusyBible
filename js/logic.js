@@ -161,6 +161,26 @@ function computeListLength(list) {
     return list.flatMap(bookIndexToListOfChapters).length
 }
 
+function createNumberSelector(value) {
+    const selector = document.createElement('input');
+    selector.type = 'number';
+    selector.min = 1;
+    selector.value = value;
+    return selector;
+}
+
+function speedSelectorEventListenerAppend(sublistIndex, chaptersPerActiveDaySelector, activeEveryXDaysSelector, activeOnDayNumberSelector) {
+    function onChange() {
+        speed[sublistIndex] = [parseInt(chaptersPerActiveDaySelector.value), parseInt(activeEveryXDaysSelector.value), parseInt(activeOnDayNumberSelector.valueAsNumber) - 1];
+        activeOnDayNumberSelector.max = parseInt(activeEveryXDaysSelector.value);
+        valueUpdate();
+    }
+
+    chaptersPerActiveDaySelector.addEventListener('input', onChange);
+    activeEveryXDaysSelector.addEventListener('input', onChange);
+    activeOnDayNumberSelector.addEventListener('input', onChange);
+}
+
 // Populates a span element that heads a list with a title and info
 function populateListHeader(spanElement, bookIndexes, sublistIndex) {
     let listName = testInValues(presets["lists"], bookIndexes);
@@ -170,7 +190,27 @@ function populateListHeader(spanElement, bookIndexes, sublistIndex) {
         listName = ''
     }
     let listLength = computeListLength(bookIndexes);
-    spanElement.innerHTML = `List ${sublistIndex + 1}: ${listName}${listLength} Chapters`;
+    const listTitle = document.createElement('span')
+    listTitle.innerHTML = `List ${sublistIndex + 1}: ${listName}${listLength} Chapters`;
+    spanElement.append(listTitle);
+    spanElement.append(document.createElement('br'))
+    
+    const speedSelector = document.createElement('span');
+    const listSpeed = speed[sublistIndex];
+    
+    const chaptersPerActiveDaySelector = createNumberSelector(listSpeed[0]);
+    const activeEveryXDaysSelector = createNumberSelector(listSpeed[1]);
+    const activeOnDayNumberSelector = createNumberSelector(listSpeed[2] + 1);
+    activeOnDayNumberSelector.max = listSpeed[1];
+    speedSelectorEventListenerAppend(sublistIndex, chaptersPerActiveDaySelector, activeEveryXDaysSelector, activeOnDayNumberSelector)
+    
+    speedSelector.append(chaptersPerActiveDaySelector);
+    speedSelector.append(' chapters every ');
+    speedSelector.append(activeEveryXDaysSelector);
+    speedSelector.append(' days on day ');
+    speedSelector.append(activeOnDayNumberSelector)
+    
+    spanElement.append(speedSelector);
 }
 
 // Populate translation selector
@@ -350,9 +390,9 @@ function listOfChaptersToExtractKey(listOfChapters, listIndex, key) {
     } else {
         // chaptersPerActiveDay is e.g. 3 for 3 chapters when this list is active
         // activeEveryXDays is e.g. 5 for one day in 5 the list is active
-        // activeDayIsDay is e.g. 0 for the first in every 5 days
-        const [chaptersPerActiveDay, activeEveryXDays, activeDayIsDay] = speed[listIndex]; 
-        if ((dayOfPlan % activeEveryXDays) == activeDayIsDay) {
+        // activeOnDayNumber is e.g. 0 for the first in every 5 days
+        const [chaptersPerActiveDay, activeEveryXDays, activeOnDayNumber] = speed[listIndex]; 
+        if ((dayOfPlan % activeEveryXDays) == activeOnDayNumber) {
             const chaptersReadBefore = Math.floor(dayOfPlan / activeEveryXDays) * chaptersPerActiveDay;
             const listOfChapterIndexes = [...Array(chaptersPerActiveDay).keys()].map(i => i + chaptersReadBefore);
             return listOfChapterIndexes.map(index => listOfChapters[mod(index, listOfChapters.length)][key]);

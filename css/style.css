@@ -80,6 +80,14 @@ h4 {
     color: #333;
 }
 
+input[type='number']{
+    width: 3em;
+}
+
+#planListsDiv input[type='number']{
+    width: 2em;
+}
+
 #listOfBooksDiv ul,
 #planListsDiv>div>ul {
     list-style: none;
