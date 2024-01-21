@@ -31,6 +31,11 @@ function populatePresetPlanSelector() {
         }
         button.addEventListener('click', function () {
             plan = structuredClone(presets["plans"][planName]);
+            if (planName in presets["speeds"]) {
+                speed = structuredClone(presets["speeds"][planName]);
+            } else {
+                speed = generateDefaultSpeedFromPlan(plan);
+            }
             updateListsSelectors();
         })
         presetPlanSelectorDiv.appendChild(button);
@@ -42,7 +47,13 @@ function updateSelectedPresetPlan() {
     let presetPlanUpdate = 'Custom'
     for (let i = 0; i < buttons.length; i++) {
         var button = buttons[i];
-        if (arrayEquals(plan, presets["plans"][button.dataset.planName])) {
+        let presetSpeed;
+        if (button.dataset.planName in presets["speeds"]) {
+            presetSpeed = presets["speeds"][button.dataset.planName];
+        } else {
+            presetSpeed = generateDefaultSpeedFromPlan(presets["plans"][button.dataset.planName])
+        }
+        if (arrayEquals(plan, presets["plans"][button.dataset.planName]) & arrayEquals(speed, presetSpeed)) {
             presetPlanUpdate = presets["plansMeta"][button.dataset.planName]["name"]
             button.classList.add('selected')
         } else {
