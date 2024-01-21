@@ -283,14 +283,18 @@ function deleteBookFromPlan(listItem, sublistIndex) {
 }
 
 // Generates a URL pointing to the current settings
-function generateURL(permalink = false) {
+function generateURL(permalink = false, next = false) {
     startDate = startDateSelector.value;
     offsetValue = parseInt(offsetSelector.value);
     translation = translationSelector.value;
     const url = new URL(window.location.href);
     if (permalink) {
         url.searchParams.delete('start');
-        url.searchParams.set('offset', dayOfPlan);
+        if (next) {
+            url.searchParams.set('offset', dayOfPlan + 1);
+        } else {
+            url.searchParams.set('offset', dayOfPlan);
+        }
     } else {
         url.searchParams.set('start', startDate);
         url.searchParams.set('offset', offsetValue);
@@ -327,8 +331,8 @@ function updateURL(pushNotReplace = false) {
     }
 }
 
-function copyURLtoClipboard(permalink = false) {
-    const url = generateURL(permalink);
+function copyURLtoClipboard(permalink = false, next = false) {
+    const url = generateURL(permalink, next);
     navigator.clipboard.writeText(url.href);
 }
 
@@ -588,6 +592,15 @@ document.getElementById('copyPlanLink').addEventListener('click', function (even
 })
 document.getElementById('copyPassagesLink').addEventListener('click', function (event) {
     copyURLtoClipboard(true);
+    event.target.classList.remove('deselected');
+    event.target.classList.add('selected');
+    setTimeout(function () {
+        event.target.classList.add('deselected');
+        event.target.classList.remove('selected');
+    }, 1000)
+})
+document.getElementById('copyNextPassagesLink').addEventListener('click', function (event) {
+    copyURLtoClipboard(true, true);
     event.target.classList.remove('deselected');
     event.target.classList.add('selected');
     setTimeout(function () {
