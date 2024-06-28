@@ -10,7 +10,7 @@
         "listen": "mclean/esv/"
     },
     "KJV" : {
-        "label": "KJV - Max Mclean",
+        "label": "KJV - Max McLean",
         "read": "KJV",
         "listen": "mclean/kjv/"
     },
