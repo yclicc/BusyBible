@@ -9,6 +9,11 @@
         "read": "ESV",
         "listen": "mclean/esv/"
     },
+    "KJV" : {
+        "label": "KJV - Max Mclean",
+        "read": "KJV",
+        "listen": "mclean/kjv/"
+    },
     "NIVDram": {
         "label": "NIV Dramatized",
         "read": "NIV",
