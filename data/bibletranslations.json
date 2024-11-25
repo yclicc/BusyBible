@@ -24,6 +24,11 @@
         "read": "CCB",
         "listen": "biblica/ccb/"
     },
+    "CCBT" {
+        "label": "CCBT / 聖經當代譯本修訂版",
+        "read": "CCBT",
+        "listen": "biblica/ccbt"
+    },
     "NVI": {
         "label": "NVI (Español) - Rafael Cruz",
         "read": "NVI",
